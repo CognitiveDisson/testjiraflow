@@ -8,6 +8,7 @@ default_platform :ios
 ######################### PUBLIC LANES ##########################
 
 desc "Submit a new build from develop branch to FTP"
+
 lane :test do |options|
 
   options[:tag_match_pattern] = "test/*"
