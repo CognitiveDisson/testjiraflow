@@ -21,6 +21,7 @@ lane :test do |options|
       :jira_host            => ENV['JIRA_HOST'],
       :jira_transition_name => ENV['JIRA_TRANSITION_NAME'],
     }
+
     puts jira_options
   end
 end
