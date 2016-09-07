@@ -9,11 +9,15 @@ default_platform :ios
 
 desc "Submit a new build from develop branch to FTP"
 lane :test do |options|
+
   # Move issues in jira
   jira_project = ENV['JIRA_PROJECT']
+
   if jira_project
+
     issues = jira_issues(options[:tag_match_pattern],
                          jira_project)
+
     jira_options = {
       :issue_ids            => issues,
       :jira_username        => ENV['JIRA_USERNAME'],
@@ -25,6 +29,7 @@ lane :test do |options|
     puts jira_options
 
   end
+
 end
 
 def jira_issues(tag_match_pattern, jira_project)
