@@ -1,0 +1,42 @@
+############################ IMPORTS ############################
+require 'date'
+require 'credentials_manager'
+
+######################### PRECONDITIONS #########################
+default_platform :ios
+
+######################### PUBLIC LANES ##########################
+
+desc "Submit a new build from develop branch to FTP"
+lane :test do |options|
+  # Move issues in jira
+  jira_project = ENV['JIRA_PROJECT']
+  if jira_project
+    issues = jira_issues(options[:tag_match_pattern],
+                         jira_project)
+    jira_options = {
+      :issue_ids            => issues,
+      :jira_username        => ENV['JIRA_USERNAME'],
+      :jira_password        => ENV['JIRA_PASSWORD'],
+      :jira_host            => ENV['JIRA_HOST'],
+      :jira_transition_name => ENV['JIRA_TRANSITION_NAME'],
+    }
+    puts jira_options
+  end
+end
+
+def jira_issues(tag_match_pattern, jira_project)
+  raw_changelog = changelog_from_git_commits(
+      tag_match_pattern: tag_match_pattern,
+      merge_commit_filtering: "exclude_merges"
+  )
+  puts raw_changelog
+  return nil unless raw_changelog != nil
+  regexp = Regexp.new("(#{jira_project}-[0-9]*)").freeze
+  messages = raw_changelog.split("\n").select { |message|
+    message.match(regexp)
+  }.map { |message|
+    message.match(regexp)[1]
+  }
+  return messages
+end
